@@ -18,8 +18,11 @@ class RangeBar extends Bar {
     if(w.config.yaxis[0].labels.sort){
       if(w.config.yaxis[0].labels.type === 'datetime' || w.config.yaxis[0].labels.type === 'date'){
         w.globals.labels = w.globals.labels.map((val) => {
-          return new Date(val.slice(0,6)+" "+new Date().getFullYear());
-          // return new Date(val);
+          if (typeof (val) == 'string') {
+            return new Date(val.slice(0, 6) + " " + new Date().getFullYear());
+          } else {
+            return new Date(val);
+          }
         });
         const sorted = w.globals.labels.sort((a,b) => {
           return a - b;
