@@ -1,6 +1,6 @@
 /*!
  * ApexCharts v3.40.0
- * (c) 2018-2023 ApexCharts
+ * (c) 2018-2024 ApexCharts
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -12549,13 +12549,14 @@
     }, {
       key: "setDefaultColors",
       value: function setDefaultColors() {
-        var _this = this;
+        var _w$config$colors,
+            _this = this;
 
         var w = this.w;
         var utils = new Utils$1();
         w.globals.dom.elWrap.classList.add("apexcharts-theme-".concat(w.config.theme.mode));
 
-        if (w.config.colors === undefined) {
+        if (w.config.colors === undefined || ((_w$config$colors = w.config.colors) === null || _w$config$colors === void 0 ? void 0 : _w$config$colors.length) === 0) {
           w.globals.colors = this.predefined();
         } else {
           w.globals.colors = w.config.colors; // if user provided a function in colors, we need to eval here
@@ -22847,9 +22848,18 @@
 
         if (w.config.yaxis[0].labels.sort) {
           if (w.config.yaxis[0].labels.type === 'datetime' || w.config.yaxis[0].labels.type === 'date') {
-            w.globals.labels = w.globals.labels.map(function (val) {
+            // year change issue fix (gives wrong date while converting date) 
+            var objectcreated = {};
+            w.globals.initialSeries.map(function (val, ind) {
+              val.data.map(function (date, dateind) {
+                var dategiven = date.x;
+                var yeargiven = date.year;
+                objectcreated[dategiven] = yeargiven;
+              });
+            });
+            w.globals.labels = w.globals.labels.map(function (val, ind) {
               if (typeof val == 'string') {
-                return new Date(val.slice(0, 6) + " " + new Date().getFullYear());
+                return new Date(val.slice(0, 6) + " " + objectcreated[val]);
               } else {
                 return new Date(val);
               }

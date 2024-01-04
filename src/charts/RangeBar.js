@@ -17,9 +17,18 @@ class RangeBar extends Bar {
     //to sort y label date's (https://github.com/apexcharts/apexcharts.js/issues/3796) issue fix
     if(w.config.yaxis[0].labels.sort){
       if(w.config.yaxis[0].labels.type === 'datetime' || w.config.yaxis[0].labels.type === 'date'){
-        w.globals.labels = w.globals.labels.map((val) => {
+        // year change issue fix (gives wrong date while converting date) 
+        let objectcreated = {};
+        w.globals.initialSeries.map(function(val,ind){
+          val.data.map(function(date,dateind){
+            let dategiven = date.x;
+            let yeargiven = date.year;
+            objectcreated[dategiven] = yeargiven;
+          })
+        })
+        w.globals.labels = w.globals.labels.map((val,ind) => {
           if (typeof (val) == 'string') {
-            return new Date(val.slice(0, 6) + " " + new Date().getFullYear());
+            return new Date(val.slice(0, 6) + " " + objectcreated[val]);
           } else {
             return new Date(val);
           }
